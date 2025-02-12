@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brennstoff-Rechner</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .flame-container {
+            width: 100px;
+            height: 150px;
+            position: relative;
+        }
+        .flame {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: radial-gradient(circle, orange, red);
+            border-radius: 50% 50% 30% 30%;
+            transition: height 0.3s ease;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🔥 Brennstoff-Rechner 🔥</h2>
+
+    <label for="brennstoff">Wähle einen Brennstoff:</label>
+    <select id="brennstoff">
+        <option value="erdgas">Erdgas</option>
+        <option value="heizoel">Heizöl</option>
+        <option value="wasserstoff">Wasserstoff</option>
+        <option value="pellets">Pellets</option>
+    </select>
+
+    <div class="controls">
+        <label>🛢️ Brennstoffmasse (kg): <span id="masseValue">1</span> kg</label>
+        <input type="range" id="masseSlider" min="1" max="100" step="1" value="1">
+    </div>
+
+    <div class="container">
+        <div>
+            <h3>🔥 Wärmeleistung: <span id="leistung">0</span> kWh</h3>
+        </div>
+        <div class="flame-container">
+            <div class="flame" id="flame"></div>
+        </div>
+    </div>
+
+    <script>
+        // Brennwerte (kWh pro kg)
+        const brennwerte = {
+            erdgas: 13.1,
+            heizoel: 11.8,
+            wasserstoff: 33.3,
+            pellets: 4.9
+        };
+
+        // HTML-Elemente abrufen
+        const brennstoffSelect = document.getElementById("brennstoff");
+        const masseSlider = document.getElementById("masseSlider");
+        const masseValue = document.getElementById("masseValue");
+        const leistungDisplay = document.getElementById("leistung");
+        const flame = document.getElementById("flame");
+
+        function updateBerechnung() {
+            // Werte holen
+            let brennstoff = brennstoffSelect.value;
+            let masse = parseFloat(masseSlider.value);
+            let brennwert = brennwerte[brennstoff];
+
+            // Wärmeleistung berechnen
+            let leistung = masse * brennwert;
+            leistungDisplay.textContent = leistung.toFixed(1);
+
+            // Flammengröße anpassen (linear skaliert)
+            let flameHeight = Math.min(150, leistung * 2); // Max. Flammengröße = 150px
+            flame.style.height = flameHeight + "px";
+        }
+
+        // Event-Listener
+        brennstoffSelect.addEventListener("change", updateBerechnung);
+        masseSlider.addEventListener("input", function() {
+            masseValue.textContent = masseSlider.value;
+            updateBerechnung();
+        });
+
+        // Initiale Berechnung
+        updateBerechnung();
+    </script>
+
+</body>
+</html>
